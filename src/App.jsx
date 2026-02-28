@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar";
 import PostList from "./components/PostList";
 import UserCard from "./components/UserCard";
+import "./App.css";
 
 const POSTS = [
   {
