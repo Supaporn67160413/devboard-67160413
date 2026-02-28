@@ -5,6 +5,28 @@ function UserCard({ name, email }) {
     .map((n) => n[0])
     .join("");
 
+  //แปลงตัวอักษรตัวเลขโดยการหารเอาเศษด้วย 3
+  const charName = name.charCodeAt(0) % 3;
+  //ค่าเริ่มต้นเป็นสีน้ำเงิน
+  let bgColor = "#1e40af"; //สีค่าเริ่มต้น
+
+  switch (charName) {
+    case 0:
+      bgColor = "#1e40af";
+      break;
+    case 1:
+      bgColor = "#40af1e";
+      break;
+    case 2:
+      bgColor = "#451eaf";
+      break;
+    default:
+      bgColor = "#1e40af";
+      break;
+  }
+
+  //
+
   return (
     <div
       style={{
@@ -22,7 +44,7 @@ function UserCard({ name, email }) {
         style={{
           width: "40px",
           height: "40px",
-          background: "#1e40af",
+          background: bgColor, //นำค่าสีที่ได้มาแทนที่สีตรงนี้
           color: "white",
           borderRadius: "50%",
           display: "flex",
