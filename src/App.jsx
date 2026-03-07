@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import PostList from "./components/PostList";
 import UserCard from "./components/UserCard";
+import AddPostForm from "./components/AddPostForm";
 import "./App.css";
 
 const POSTS = [
@@ -12,7 +14,7 @@ const POSTS = [
   {
     id: 2,
     title: "ทำไมต้องใช้ Components?",
-    body: "Component ช่วยให้เราแบ่ง UI ออกเป็นชิ้นเล็กๆ ที่ reuse ได้",
+    body: "Components ช่วยให้เราแบ่ง UI ออกเป็นชิ้นเล็กๆ ที่ reuse ได้",
   },
   {
     id: 3,
@@ -33,9 +35,31 @@ const USERS = [
 ];
 
 function App() {
+  const [posts, setPosts] = useState(POSTS);
+  const [favorites, setFavorites] = useState([]); //เก็บ ID ที่ถูกใจ
+
+  // Toggle ถูกใจ/ยกเลิก
+  function handleToggleFavorite(postId) {
+    setFavorites(
+      (prev) =>
+        prev.includes(postId) //ตรวจสอบว่ามีไอดีอยู่ใน Array กดถูกใจหรือไม่
+          ? prev.filter((id) => id !== postId) //หากมีจะลบออก
+          : [...prev, postId], //หากไม่มีจะเพิ่มเข้าไปใน Array
+    );
+  }
+
+  function handleAddPost({ title, body }) {
+    const newPost = {
+      id: Date.now(), //ใช้เวลาในการกำหนด ID ชั่วคราว
+      title,
+      body,
+    };
+    setPosts((prev) => [newPost, ...prev]); //เพิ่มโพสต์ไว้ด้านบน
+  }
+
   return (
     <div>
-      <Navbar />
+      <Navbar favoriteCount={favorites.length} />
       <div
         style={{
           maxWidth: "900px",
@@ -48,7 +72,12 @@ function App() {
       >
         {/* คอลัมน์ซ้าย: โพสต์ */}
         <div>
-          <PostList posts={POSTS} />
+          <AddPostForm onAddPost={handleAddPost} />
+          <PostList
+            posts={posts}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+          />
         </div>
         {/* คอลัมน์ขวา: สมาชิก */}
         <div>
