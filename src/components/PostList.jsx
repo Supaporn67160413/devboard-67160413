@@ -24,6 +24,7 @@ function PostList({ posts, favorites, onToggleFavorite }) {
         โพสต์ล่าสุด
       </h2>
 
+      {/* นับจำนวนโพสต์ */}
       <PostCount count={posts.length} />
 
       {/* กล่องค้นหา */}
