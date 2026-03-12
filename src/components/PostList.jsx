@@ -11,6 +11,8 @@ function PostList({ favorites, onToggleFavorite }) {
   const [search, setSearch] = useState("");
   // ตัวแปรที่ไว้ใช้ในการกดปุ่มโหลดใหม่
   const [refresh, setRefresh] = useState(false);
+  // ตัวแปรไว้เก็บหน้าที่อยู่ ณ ปัจจุบัน
+  const [currentPage, setCurrentPage] = useState(1); //เริ่มต้นที่หน้าแรก
 
   // ฟังก์ไว้เรียกใช้งาน fetch
   async function fetchPosts() {
@@ -40,6 +42,17 @@ function PostList({ favorites, onToggleFavorite }) {
     // กรองเอาแค่หัวข้อที่ตรงกับคำค้นหา
     // .includes ทำหน้าที่ในการตรวจสอบว่าค่าที่ใส่ไปนั้นอยู่ใน Array หรือ String หรือไม่
   );
+
+  //แสดงเพียง 10 รายการต่อหน้า
+  //โดยที่ตัดแบ่ง filtered
+  const pagePosts = filtered.slice((currentPage - 1) * 10, currentPage * 10);
+  //ต้องการ 10 รายการ/หน้า
+  //เริ่มจาก:  ((เลขหน้า) - 1) * 10
+  //สิ้นสุด: ((เลขหน้า) * 10)
+  //หน้า 1 - เริ่มจาก: (1 - 1) * 10 = 0 (เริ่มจากรายการที่ 0)
+  //หน้า 1 - สิ้นสุด: 1 * 10 (สิ้นสุดรายการที่ 10)
+  //หน้า 2 - เริ่มจาก: (2 - 1) * 10 = 10 (เริ่มจากรายการที่ 10)
+  //หน้า 2 - สิ้นสุด: 2 * 10 = 20 (สิ้นสุดรายการที่ 20)
 
   //ถ้า lading เป็น true จะเรียกใช้ component ที่ชื่อ LoadingSpinner
   if (loading) return <LoadingSpinner />;
@@ -111,7 +124,8 @@ function PostList({ favorites, onToggleFavorite }) {
       )}
 
       {/* แสดงรายการโพสต์ */}
-      {filtered.map((post) => (
+      {/* เปลี่ยนมาใช้ตัวแปรที่มีโพสต์ 10 รายการที่ตัดมาแทน */}
+      {pagePosts.map((post) => (
         <PostCard
           key={post.id}
           post={post}
@@ -119,6 +133,35 @@ function PostList({ favorites, onToggleFavorite }) {
           onToggleFavorite={() => onToggleFavorite(post.id)}
         />
       ))}
+
+      {/* แสดงหน้าที่อยู่และปุ่มเปลี่ยนหน้า */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "1.5rem",
+          marginTop: "2rem",
+        }}
+      >
+        <button
+          // เมื่อคลิก currentPage ลดไป 1
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          // จะไม่สามารถกดได้ถ้าอยู่หน้า 1
+          disabled={currentPage === 1}
+        >
+          ← ก่อนหน้า
+        </button>
+        <p>หน้า {currentPage} / 2</p>
+        <button
+          // เมื่อคลิก currentPage เพิ่มไป 1
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          // จะไม่สามารถกดได้ถ้าอยู่หน้า 2
+          disabled={currentPage === 2}
+        >
+          ถัดไป →
+        </button>
+      </div>
     </div>
   );
 }
